@@ -42,10 +42,10 @@
         body: JSON.stringify({ nome, desc, preco, qntd }),
       });
       if (response.ok) {
-        document.getElementById("nome").value = "";
-        document.getElementById("desc").value = "";
-        document.getElementById("preco").value = "";
-        document.getElementById("qntd").value = "";
+        document.innerHTML("nome").value = "";
+        document.innerHTML("desc").value = "";
+        document.innerHTML("preco").value = "";
+        document.innerHTML("qntd").value = "";
       }
     }
 
@@ -78,11 +78,11 @@
 
       fetch(API)
         .then(response => response.json())
-        .then(tarefas => {
+        .then(produtos => {
           const lista = document.getElementById('lista-produtos');
           lista.innerHTML = ''; // Limpa a lista
 
-          tarefas.forEach(produto => {
+          produtos.forEach(produto => {
             lista.innerHTML += `
           <li>
             Produto: ${produto.nome}<br>
