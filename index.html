@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>StockCtrl - CRUD</title>
+  <link rel="stylesheet" href="style/index.css">
+</head>
+
+<body>
+  <div class="containner">
+    <input id="nome" placeholder="nome do produto" />
+    <input id="desc" placeholder="descrição do produto" />
+    <input id="preco" placeholder="preço do produto" />
+    <input id="qntd" placeholder="quantidade do produto" />
+
+
+    <button onclick="addProd()">add</button>
+    <button onclick="removeProd()">remove</button>
+    <button onclick="editProd()">edit</button>
+    <button onclick="allProd()">all products</button>
+    <br>
+    <ul id="lista-produtos">
+    </ul>
+
+  </div>
+
+
+  <script>
+    const API = "http://localhost:3001/produtos";
+
+    // Exemplo de inclusão (POST)
+    function addProd() {
+      const nome = document.getElementById("nome").value;
+      const desc = document.getElementById("desc").value;
+      const preco = document.getElementById("preco").value;
+      const qntd = document.getElementById("qntd").value;
+
+      fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome, desc, preco, qntd }),
+      });
+      if (response.ok) {
+        document.getElementById("nome").value = "";
+        document.getElementById("desc").value = "";
+        document.getElementById("preco").value = "";
+        document.getElementById("qntd").value = "";
+      }
+    }
+
+    // Exemplo de exclusão (DELETE) - coloque um id válido manualmente
+    function removeProd() {
+      const id = prompt("Digite o ID do produto para excluir:");
+      fetch(API + "/" + id, { method: "DELETE" });
+    }
+
+    function editProd() {
+      const id = prompt("Digite o id do produto:");
+      const nome = prompt("digite o nome do produto:");
+      const desc = prompt("digite a descrição:");
+      const preco = prompt("digite o preço:");
+      const qntd = prompt("digite a quantidade em estoque:");
+
+      fetch(API + "/" + id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome, desc, preco, qntd })
+      })
+
+        .then(response => response.json())
+        .then(data => console.log("Tarefa atualizada:", data))
+        .catch(error => console.error("Erro:", error));
+
+    };
+
+    function allProd() {
+
+      fetch(API)
+        .then(response => response.json())
+        .then(tarefas => {
+          const lista = document.getElementById('lista-produtos');
+          lista.innerHTML = ''; // Limpa a lista
+
+          tarefas.forEach(produto => {
+            lista.innerHTML += `
+          <li>
+            Produto: ${produto.nome}<br>
+            ID: ${produto._id} <br>
+            Descrição: ${produto.desc}<br>
+            Preço: ${produto.preco}<br>
+            Quantidade em estoque: ${produto.qntd}<br>
+          </li>
+        `;
+          });
+        });
+
+    }
+
+
+
+  </script>
+</body>
+
+</html>
