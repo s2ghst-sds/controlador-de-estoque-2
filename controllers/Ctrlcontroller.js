@@ -38,7 +38,7 @@ exports.create = async (req, res) => {
       qntd: Number(qntd)
     });
     await novoProduto.save();
-    res.status(201).json(novoProduto);
+    res.status(201).json(novoProduto);  
   } catch (error) {
     res.status(500).json({ erro: "Erro ao criar produto" });
   }
