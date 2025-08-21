@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upload de Arquivos</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2rem;
+      background-color: aliceblue;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    form {
+      margin-bottom: 2rem;
+    }
+
+    .image-list img {
+      max-width: 150px;
+      height: auto;
+      display: block;
+    }
+
+    .card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    button {
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      cursor: pointer;
+      margin-top: 15px;
+      border-radius: 5px;
+      width: 100px;
+      
+    }
+  </style>
+
+<!--[if gte mso 9]><xml>
+<mso:CustomDocumentProperties>
+<mso:xd_Signature msdt:dt="string"></mso:xd_Signature>
+<mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_Editor msdt:dt="string">ALEX JACINTO DE SOUSA</mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_Editor>
+<mso:Order msdt:dt="string">431900.000000000</mso:Order>
+<mso:xd_ProgID msdt:dt="string"></mso:xd_ProgID>
+<mso:_ExtendedDescription msdt:dt="string"></mso:_ExtendedDescription>
+<mso:SharedWithUsers msdt:dt="string"></mso:SharedWithUsers>
+<mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_Author msdt:dt="string">ALEX JACINTO DE SOUSA</mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_Author>
+<mso:ComplianceAssetId msdt:dt="string"></mso:ComplianceAssetId>
+<mso:TemplateUrl msdt:dt="string"></mso:TemplateUrl>
+<mso:ContentTypeId msdt:dt="string">0x010100FC3B20352B8CF247A1EE24B5DFE03CC6</mso:ContentTypeId>
+<mso:TriggerFlowInfo msdt:dt="string"></mso:TriggerFlowInfo>
+<mso:_SourceUrl msdt:dt="string"></mso:_SourceUrl>
+<mso:_SharedFileIndex msdt:dt="string"></mso:_SharedFileIndex>
+<mso:TaxCatchAll msdt:dt="string"></mso:TaxCatchAll>
+<mso:MediaServiceImageTags msdt:dt="string"></mso:MediaServiceImageTags>
+<mso:lcf76f155ced4ddcb4097134ff3c332f msdt:dt="string"></mso:lcf76f155ced4ddcb4097134ff3c332f>
+</mso:CustomDocumentProperties>
+</xml><![endif]-->
+</head>
+<body>
+  <div class="container">
+    <h1>Upload de Arquivos</h1>
+
+    <form id="uploadForm">
+      <input type="text" name="name" placeholder="Nome da imagem" required />
+      <input type="file" name="file" required />
+      <button type="submit">Enviar</button>
+    </form>
+
+    <h2>Imagens Salvas</h2>
+    <div id="imageContainer" class="image-list"></div>
+  </div>
+
+
+  <script>
+    // A URL base para a API que o cliente irá interagir.
+    // O cliente irá fazer requisições para 'http://localhost:3000/pictures'.
+    const API_URL = "http://localhost:9090/pictures";
+
+    // Define uma função assíncrona para buscar as imagens do servidor.
+    async function fetchImages() {
+      try {
+        // 1. Envia uma requisição GET para a API para obter a lista de imagens.
+        const response = await fetch(API_URL);
+        // 2. Converte a resposta do servidor de JSON para um objeto JavaScript.
+        const images = await response.json();
+        // 3. Seleciona o elemento HTML onde as imagens serão exibidas.
+        const container = document.getElementById("imageContainer");
+        // 4. Limpa o conteúdo do contêiner para evitar duplicatas ao recarregar a lista.
+        container.innerHTML = "";
+
+        // 5. Itera sobre cada imagem recebida do servidor.
+        images.forEach(image => {
+           // 6. Cria um novo elemento div para servir como o "card" da imagem.
+          const card = document.createElement("div");
+          // 7. Adiciona uma classe CSS ao card para estilização.
+          card.className = "card";
+          // 8. Cria um parágrafo para exibir o nome da imagem.
+          const name = document.createElement("p");
+          name.textContent = "Nome: " + image.name;
+          // 9. Cria um elemento 'img' para exibir a imagem
+          const img = document.createElement("img");
+          // 10. Define a URL da imagem usando o 'src' recebido da API
+          img.src = image.src;
+          // 11. Define o texto alternativo para a imagem.
+          img.alt = image.name;
+
+          // 12. Cria um botão para a ação de deletar.
+          const deleteBtn = document.createElement("button");
+          deleteBtn.textContent = "Deletar";
+
+          // 13. Adiciona um 'listener' de clique ao botão de deletar.
+         deleteBtn.onclick = async () => {
+          // 14. Pede uma confirmação ao usuário antes de prosseguir com a exclusão.
+          if (confirm("Tem certeza que deseja deletar esta imagem????")) {
+          try {
+            // 15. Envia uma requisição DELETE para a API, passando o ID da imagem.
+            const delResponse = await fetch(`${API_URL}/${image._id}`, {
+              method: "DELETE",
+            });
+
+          // 16. Converte a resposta de exclusão para JSON.
+          const result = await delResponse.json();
+
+          // 17. Se a requisição foi bem-sucedida (status 200-299),
+          if (delResponse.ok) {
+          // 18. Remove o card da imagem diretamente do HTML, sem recarregar a página.
+            card.remove();
+            // 19. Exibe uma mensagem de sucesso para o usuário
+            alert(result.message || "Imagem deletada com sucesso!");
+          } else {
+            // 20. Se houve um erro, exibe a mensagem de erro da API.
+            alert(result.message || "Erro ao deletar a imagem.");
+          }
+        } catch (err) {
+          // 21. Se a requisição falhar (ex: erro de rede), exibe um alerta genérico e loga o erro no console.
+          alert("Erro na comunicação com o servidor.");
+          console.error(err);
+        }
+      }
+    };
+          // 22. Adiciona os elementos (nome, imagem, botão) ao card.
+          card.appendChild(name);
+          card.appendChild(img);
+          card.appendChild(deleteBtn);
+           // 23. Adiciona o card completo ao contêiner principal na página.
+          container.appendChild(card);
+
+        });
+      } catch (err) {
+        // 24. Se a busca inicial de imagens falhar, loga o erro no console.
+        console.error("Erro ao buscar imagens:", err);
+      }
+    }
+
+    // 25. Adiciona um 'listener' ao formulário de upload de imagens.
+    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+      // 26. Previne o comportamento padrão de submissão do formulário, que recarregaria a página.
+      e.preventDefault();
+
+      // 27. Obtém a referência ao formulário.
+      const form = e.target;
+      // 28. Cria um objeto FormData a partir do formulário. Isso é necessário para enviar o arquivo.
+      const formData = new FormData(form);
+
+      try {
+        // 29. Envia uma requisição POST com o FormData para a API
+        await fetch(API_URL, {
+          method: "POST",
+          body: formData
+        });
+        // 30. Reseta o formulário após o envio bem-sucedido.
+        form.reset();
+        // 31. Chama a função para recarregar a lista de imagens, exibindo a nova imagem.
+        fetchImages();
+
+      } catch (err) {
+        // 32. Em caso de erro no upload, exibe um alerta e loga o erro.
+        alert("Erro ao enviar imagem.");
+        console.error(err);
+      }
+    });
+
+    // 33. Chama a função 'fetchImages' para carregar a galeria logo que a página é carregada.
+    // Inicializa a lista
+    fetchImages();
+  </script>
+</body>
+</html>

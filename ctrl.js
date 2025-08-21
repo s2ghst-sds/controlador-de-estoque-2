@@ -1,15 +1,16 @@
 const express = require("express");
 const cors = require("cors");
-require("./config/db");
 const ctrlRoutes = require("./routes/ctrlRoutes");
 const emailRoutes = require("./routes/emailRoutes");
 const dotenv = require("dotenv");
+const app = express();
+const pictureRouter = require("./routes/picture");
+
 
 dotenv.config();
+require("./config/db");
 
 
-
-const app = express();
 app.use(cors());
 app.use(express.json());
 
@@ -18,8 +19,11 @@ app.get("/", (req, res) => {
   res.status(200).send("Bem-vindo à API integrado ao FrontEnd");
 });
 
-app.use("/produtos", ctrlRoutes);
 app.use("/", emailRoutes);
+app.use("/produtos", ctrlRoutes);
+app.use("/pictures", pictureRouter);
+app.use("/uploads", express.static("uploads"));
+
 
 
 const porta = process.env.PORT || 3000;
