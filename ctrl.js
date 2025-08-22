@@ -1,10 +1,14 @@
 const express = require("express");
 const cors = require("cors");
+const dotenv = require("dotenv");
+
 const ctrlRoutes = require("./routes/ctrlRoutes");
 const emailRoutes = require("./routes/emailRoutes");
-const dotenv = require("dotenv");
-const app = express();
 const pictureRouter = require("./routes/picture");
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+
+const app = express();
 
 
 dotenv.config();
@@ -16,13 +20,16 @@ app.use(express.json());
 
 
 app.get("/", (req, res) => {
-  res.status(200).send("Bem-vindo à API integrado ao FrontEnd");
+  res.status(200).send("Bem-vindo à API do Projeto de Controle de Estoque!");
 });
 
 app.use("/", emailRoutes);
 app.use("/produtos", ctrlRoutes);
 app.use("/pictures", pictureRouter);
 app.use("/uploads", express.static("uploads"));
+app.use("/auth", authRoutes);    // Rotas de autenticação
+app.use("/user", userRoutes);    // Rotas de usuário
+
 
 
 
