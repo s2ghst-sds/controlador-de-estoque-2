@@ -12,7 +12,6 @@ module.exports = mongoose.model("ToDo", ToDoSchema, "Frontend");
 
 */
 
-
 const StockCtrlSchema = new mongoose.Schema({
   nome: { type: String, required: true },
   desc: { type: String },

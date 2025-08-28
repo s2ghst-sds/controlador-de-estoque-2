@@ -1,11 +1,11 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../models/usuarioModel");
+const User = require("../models/UserModel");
 
 
 
 //07 - Depois criar o arquivo MODEL
-exports.post("/auth/register", async (req, res) => {
+exports.register = async (req, res) => {
   const { name, email, password, confirmpassword } = req.body; // Obtém os dados do corpo da requisição
 
   // validations
@@ -52,12 +52,12 @@ exports.post("/auth/register", async (req, res) => {
   } catch (error) {
     res.status(500).json({ msg: error }); // Retorna um erro 500 se algo der errado ao salvar o usuário
   }
-});
+};
 
 
 
 //08
-exports.post("/auth/login", async (req, res) => {
+exports.login = async (req, res) => {
   const { email, password } = req.body; // Obtém os dados do corpo da requisição
 
   // validations
@@ -101,5 +101,5 @@ exports.post("/auth/login", async (req, res) => {
   }
 
   //Ainda não sabe lidar com token iremos realizar a tratativa no passo 10
-});
+};
 

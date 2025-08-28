@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 //02
 
-const userCtrlSchema = new mogoose.Schema({
+const userCtrlSchema = new mongoose.Schema({
 
   name: {
     type: String,

@@ -1,4 +1,4 @@
-const User = require("../models/usuarioModel");
+const User = require("../models/UserModel");
 
 // Busca usuário (rota pública - mantido do original)
 const getUserPublic = async (req, res) => {
