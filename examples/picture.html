@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<html lang="pt-BR" xmlns:mso="urn:schemas-microsoft-com:office:office"
+  xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Upload de Arquivos</title>
   <style>
     body {
@@ -44,11 +46,11 @@
       margin-top: 15px;
       border-radius: 5px;
       width: 100px;
-      
+
     }
   </style>
 
-<!--[if gte mso 9]><xml>
+  <!--[if gte mso 9]><xml>
 <mso:CustomDocumentProperties>
 <mso:xd_Signature msdt:dt="string"></mso:xd_Signature>
 <mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_Editor msdt:dt="string">ALEX JACINTO DE SOUSA</mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_Editor>
@@ -69,6 +71,7 @@
 </mso:CustomDocumentProperties>
 </xml><![endif]-->
 </head>
+
 <body>
   <div class="container">
     <h1>Upload de Arquivos</h1>
@@ -87,7 +90,7 @@
   <script>
     // A URL base para a API que o cliente irá interagir.
     // O cliente irá fazer requisições para 'http://localhost:3000/pictures'.
-    const API_URL = "http://localhost:9090/pictures";
+    const API_URL = "http://localhost:8080/pictures";
 
     // Define uma função assíncrona para buscar as imagens do servidor.
     async function fetchImages() {
@@ -103,7 +106,7 @@
 
         // 5. Itera sobre cada imagem recebida do servidor.
         images.forEach(image => {
-           // 6. Cria um novo elemento div para servir como o "card" da imagem.
+          // 6. Cria um novo elemento div para servir como o "card" da imagem.
           const card = document.createElement("div");
           // 7. Adiciona uma classe CSS ao card para estilização.
           card.className = "card";
@@ -122,40 +125,40 @@
           deleteBtn.textContent = "Deletar";
 
           // 13. Adiciona um 'listener' de clique ao botão de deletar.
-         deleteBtn.onclick = async () => {
-          // 14. Pede uma confirmação ao usuário antes de prosseguir com a exclusão.
-          if (confirm("Tem certeza que deseja deletar esta imagem????")) {
-          try {
-            // 15. Envia uma requisição DELETE para a API, passando o ID da imagem.
-            const delResponse = await fetch(`${API_URL}/${image._id}`, {
-              method: "DELETE",
-            });
+          deleteBtn.onclick = async () => {
+            // 14. Pede uma confirmação ao usuário antes de prosseguir com a exclusão.
+            if (confirm("Tem certeza que deseja deletar esta imagem????")) {
+              try {
+                // 15. Envia uma requisição DELETE para a API, passando o ID da imagem.
+                const delResponse = await fetch(`${API_URL}/${image._id}`, {
+                  method: "DELETE",
+                });
 
-          // 16. Converte a resposta de exclusão para JSON.
-          const result = await delResponse.json();
+                // 16. Converte a resposta de exclusão para JSON.
+                const result = await delResponse.json();
 
-          // 17. Se a requisição foi bem-sucedida (status 200-299),
-          if (delResponse.ok) {
-          // 18. Remove o card da imagem diretamente do HTML, sem recarregar a página.
-            card.remove();
-            // 19. Exibe uma mensagem de sucesso para o usuário
-            alert(result.message || "Imagem deletada com sucesso!");
-          } else {
-            // 20. Se houve um erro, exibe a mensagem de erro da API.
-            alert(result.message || "Erro ao deletar a imagem.");
-          }
-        } catch (err) {
-          // 21. Se a requisição falhar (ex: erro de rede), exibe um alerta genérico e loga o erro no console.
-          alert("Erro na comunicação com o servidor.");
-          console.error(err);
-        }
-      }
-    };
+                // 17. Se a requisição foi bem-sucedida (status 200-299),
+                if (delResponse.ok) {
+                  // 18. Remove o card da imagem diretamente do HTML, sem recarregar a página.
+                  card.remove();
+                  // 19. Exibe uma mensagem de sucesso para o usuário
+                  alert(result.message || "Imagem deletada com sucesso!");
+                } else {
+                  // 20. Se houve um erro, exibe a mensagem de erro da API.
+                  alert(result.message || "Erro ao deletar a imagem.");
+                }
+              } catch (err) {
+                // 21. Se a requisição falhar (ex: erro de rede), exibe um alerta genérico e loga o erro no console.
+                alert("Erro na comunicação com o servidor.");
+                console.error(err);
+              }
+            }
+          };
           // 22. Adiciona os elementos (nome, imagem, botão) ao card.
           card.appendChild(name);
           card.appendChild(img);
           card.appendChild(deleteBtn);
-           // 23. Adiciona o card completo ao contêiner principal na página.
+          // 23. Adiciona o card completo ao contêiner principal na página.
           container.appendChild(card);
 
         });
@@ -198,4 +201,5 @@
     fetchImages();
   </script>
 </body>
+
 </html>

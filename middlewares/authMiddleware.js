@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 
 // Middleware para verificar token JWT (mantido do original)
-function checkToken(req, res, next) {
+exports.checkToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
@@ -18,5 +19,3 @@ function checkToken(req, res, next) {
     return res.status(400).json({ msg: "O Token é inválido!" });
   }
 }
-
-module.exports = { checkToken };

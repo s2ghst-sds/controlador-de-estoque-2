@@ -1,16 +1,19 @@
 const StockCtrl = require("../models/Ctrl");
+const Picture = require("../models/Picture");
+const fs = require("fs");
+
 
 // Listar todas as tarefas
 exports.getAll = async (req, res) => {
   try {
-    const produtos = await StockCtrl.find();
+    const produtos = await StockCtrl.find().populate('imagem');
     res.json(produtos);
   } catch (error) {
     res.status(500).json({ erro: "Erro ao buscar produtos" });
   }
 };
 
-// Buscar tarefa por ID
+// Buscar produto por ID
 exports.getById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -24,21 +27,40 @@ exports.getById = async (req, res) => {
   }
 };
 
-// Criar nova tarefa
+// Criar novo produto
 exports.create = async (req, res) => {
-  const { nome, desc, preco, qntd } = req.body;
-  if (!nome) {
-    return res.status(400).json({ erro: "Nome é obrigatório" });
+
+  const { nome, desc, categoria, precocompra, precovenda, validade, qntd } = req.body;
+  const file = req.file;
+
+  if (!nome || !desc || !categoria || !precocompra || !precovenda || !validade || !qntd || !file) {
+    return res.status(400).json({ erro: "Todos os campos são obrigatórios" });
   }
   try {
+
+    const picture = new Picture({
+      name: "imagem de " + nome,
+      src: file.path,
+    });
+    await picture.save();
+
+    
+
     const novoProduto = new StockCtrl({
       nome,
       desc,
-      preco: Number(preco),
-      qntd: Number(qntd)
+      categoria,
+      precocompra: Number(precocompra),
+      precovenda: Number(precovenda),
+      validade: new Date(validade),
+      qntd: Number(qntd),
+      imagem: picture._id
     });
+
     await novoProduto.save();
-    res.status(201).json(novoProduto);  
+    const produtoComImagem = await StockCtrl.findById(novoProduto._id).populate('imagem');
+    res.status(201).json(produtoComImagem);
+
   } catch (error) {
     res.status(500).json({ erro: "Erro ao criar produto" });
   }
@@ -77,3 +99,28 @@ exports.remove = async (req, res) => {
     res.status(500).json({ erro: "Erro ao remover prod" });
   }
 }; 
+
+exports.getPublicProducts = async (req, res) => {
+  try {
+    const produtos = await Product.find()
+      .populate('imagem')
+      .select('-precocompra -validade -qntd'); // Exclui campos sensíveis
+    
+    res.json(produtos);
+  } catch (error) {
+    res.status(500).json({ erro: "Erro ao buscar produtos" });
+  }
+};
+
+exports.getProductsByCategory = async (req, res) => {
+  try {
+    const { categoria } = req.params;
+    const produtos = await Product.find({ categoria })
+      .populate('imagem')
+      .select('-precocompra -validade -qntd');
+    
+    res.json(produtos);
+  } catch (error) {
+    res.status(500).json({ erro: "Erro ao buscar produtos por categoria" });
+  }
+};

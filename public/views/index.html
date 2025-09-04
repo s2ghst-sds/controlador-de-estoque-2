@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockCtrl</title>
+    <link rel="stylesheet" href="../css/index.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <h1>StockCtrl</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#inicio">Início</a></li>
+                <li><a href="#produtos">Produtos</a></li>
+                <li><a href="#sobre">Sobre</a></li>
+                <li><a href="/login" class="btn-login">Entrar</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero">
+            <div class="hero-content">
+                <h2>Os melhores chás e acessórios</h2>
+                <p>Descubra nossa seleção premium de chás e produtos relacionados</p>
+                <a href="#produtos" class="btn-primary">Ver Produtos</a>
+            </div>
+        </section>
+
+        <section id="categorias">
+            <h2>Categorias</h2>
+            <div class="categorias-container">
+                <button class="categoria-btn" data-categoria="Chá">Chás</button>
+                <button class="categoria-btn" data-categoria="Caneca">Canecas</button>
+                <button class="categoria-btn" data-categoria="Garrafa">Garrafas</button>
+                <button class="categoria-btn" data-categoria="Infusor">Infusores</button>
+                <button class="categoria-btn" data-categoria="Acessório">Acessórios</button>
+            </div>
+        </section>
+
+        <section id="produtos">
+            <h2>Nossos Produtos</h2>
+            <div id="produtos-container" class="produtos-grid">
+                <!-- Produtos serão carregados via JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 StockCtrl Chás. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>

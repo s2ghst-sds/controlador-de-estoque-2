@@ -14,9 +14,16 @@ module.exports = mongoose.model("ToDo", ToDoSchema, "Frontend");
 
 const StockCtrlSchema = new mongoose.Schema({
   nome: { type: String, required: true },
-  desc: { type: String },
-  preco: { type: Number },
-  qntd: { type: Number }
+  desc: { type: String, required: true },
+  categoria: { type: String, required: true },
+  precocompra: { type: Number, required: true },
+  precovenda: { type: Number, required: true },
+  validade: { type: Date },
+  qntd: { type: Number, required: true },
+  imagem: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Picture'
+  }
 });
 
 module.exports = mongoose.model("StockCtrl", StockCtrlSchema, "estoquedecontrolador");

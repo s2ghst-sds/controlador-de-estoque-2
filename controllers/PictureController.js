@@ -15,7 +15,7 @@ const Picture = require("../models/Picture");
 exports.create = async (req, res) => {
   try {
      // 1. Desestrutura o objeto 'req.body' para obter o 'name' da imagem enviado no corpo da requisição.
-    const { name } = req.body;
+    const { nome } = req.body;
 
     // 2. Obtém o objeto 'file' da requisição, que contém informações sobre o arquivo
     //    que foi salvo pelo Multer, incluindo o caminho ('file.path').
@@ -23,7 +23,7 @@ exports.create = async (req, res) => {
 
     // 3. Cria uma nova instância do modelo 'Picture' com o nome e o caminho do arquivo.
     const picture = new Picture({
-      name,
+      nome,
       src: file.path,
     });
 
