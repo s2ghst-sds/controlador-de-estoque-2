@@ -50,3 +50,4 @@ exports.enviarEmail = async (req, res) => {
     res.status(500).json({ msg: "Erro ao enviar e-mail", erro: erro.message });
   }
 };
+

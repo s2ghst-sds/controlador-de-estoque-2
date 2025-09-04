@@ -1,7 +1,8 @@
 const StockCtrl = require("../models/Ctrl");
 const Picture = require("../models/Picture");
+const createTransporter = require("../config/email");
+const dotenv = require("dotenv");
 const fs = require("fs");
-
 
 // Listar todas as tarefas
 exports.getAll = async (req, res) => {
@@ -44,7 +45,7 @@ exports.create = async (req, res) => {
     });
     await picture.save();
 
-    
+
 
     const novoProduto = new StockCtrl({
       nome,
@@ -58,8 +59,11 @@ exports.create = async (req, res) => {
     });
 
     await novoProduto.save();
+    this.verificarEstoque(novoProduto);
     const produtoComImagem = await StockCtrl.findById(novoProduto._id).populate('imagem');
     res.status(201).json(produtoComImagem);
+
+
 
   } catch (error) {
     res.status(500).json({ erro: "Erro ao criar produto" });
@@ -69,17 +73,18 @@ exports.create = async (req, res) => {
 // Atualizar prod
 exports.update = async (req, res) => {
   const { id } = req.params;
-  const { nome, desc, preco, qntd } = req.body;
-  if (!nome) {
-    return res.status(400).json({ erro: "nome é obrigatória" });
+  const { nome, desc, categoria, precocompra, precovenda, validade, qntd } = req.body;
+  if (!nome || !desc || !categoria || !precocompra || !precovenda || !validade || !qntd) {
+    return res.status(400).json({ erro: "Todos os campos são obrigatorios!" });
   }
   try {
     const produto = await StockCtrl.findByIdAndUpdate(id,
-      { nome, desc, preco, qntd },
+      { nome, desc, categoria, precocompra, precovenda, validade, qntd },
       { new: true, runValidators: true });
     if (!produto) {
       return res.status(404).json({ erro: "produto não encontrada" });
     }
+    this.verificarEstoque(produto);
     res.json(produto);
   } catch (error) {
     res.status(500).json({ erro: "Erro ao atualizar produto" });
@@ -98,14 +103,14 @@ exports.remove = async (req, res) => {
   } catch (error) {
     res.status(500).json({ erro: "Erro ao remover prod" });
   }
-}; 
+};
 
 exports.getPublicProducts = async (req, res) => {
   try {
     const produtos = await Product.find()
       .populate('imagem')
       .select('-precocompra -validade -qntd'); // Exclui campos sensíveis
-    
+
     res.json(produtos);
   } catch (error) {
     res.status(500).json({ erro: "Erro ao buscar produtos" });
@@ -118,9 +123,39 @@ exports.getProductsByCategory = async (req, res) => {
     const produtos = await Product.find({ categoria })
       .populate('imagem')
       .select('-precocompra -validade -qntd');
-    
+
     res.json(produtos);
   } catch (error) {
     res.status(500).json({ erro: "Erro ao buscar produtos por categoria" });
+  }
+};
+
+exports.verificarEstoque = async (produto) => {
+  const ESTOQUE_MINIMO = 5; // Define o limite mínimo
+
+  if (produto.qntd <= ESTOQUE_MINIMO) {
+    try {
+      const transportador = createTransporter();
+
+      await transportador.sendMail({
+        from: process.env.SMTP_FROM || process.env.SMTP_USER,
+        to: process.env.SMTP_USER, // Email do administrador
+        subject: `⚠️ Alerta de Estoque Baixo: ${produto.nome}`,
+        html: `
+          <h2>Alerta de Estoque Baixo</h2>
+          <p>O produto <strong>${produto.nome}</strong> está com estoque baixo.</p>
+          <ul>
+            <li>Quantidade atual: <strong>${produto.qntd} unidades</strong></li>
+            <li>Limite mínimo: ${ESTOQUE_MINIMO} unidades</li>
+            <li>Categoria: ${produto.categoria || 'Não informada'}</li>
+          </ul>
+          <p>Por favor, reabasteça o estoque.</p>
+        `
+      });
+
+      console.log(`E-mail de alerta enviado para ${produto.nome}`);
+    } catch (erro) {
+      console.error("Erro ao enviar e-mail de alerta:", erro.message);
+    }
   }
 };
