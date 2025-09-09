@@ -20,6 +20,7 @@ const StockCtrlSchema = new mongoose.Schema({
   precovenda: { type: Number, required: true },
   validade: { type: Date },
   qntd: { type: Number, required: true },
+  qntdmin: { type: Number, default: 5 },
   imagem: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Picture'

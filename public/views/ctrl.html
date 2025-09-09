@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,66 +23,72 @@
     <main>
       <section class="form-section">
         <h2>Adicionar Novo Produto</h2>
-        
+
         <div class="form-group">
           <input id="nome" placeholder="Nome do produto" required />
         </div>
-        
+
         <div class="form-group">
           <textarea id="desc" placeholder="Descrição do produto" rows="2" required></textarea>
         </div>
-        
+
         <div class="form-row">
           <div class="form-group">
             <input id="precocompra" placeholder="Preço de compra" type="number" step="0.01" required />
           </div>
-          
+
           <div class="form-group">
             <input id="precovenda" placeholder="Preço de venda" type="number" step="0.01" required />
           </div>
         </div>
-        
+
         <div class="form-row">
           <div class="form-group">
-            <input id="validade" placeholder="Validade" type="date" required />
+            <input id="validade" placeholder="Validade" type="date" />
           </div>
-          
+
           <div class="form-group">
             <input id="qntd" placeholder="Quantidade em estoque" type="number" required />
           </div>
         </div>
-        
-        <div class="form-group">
-          <select id="categoria" required>
-            <option value="">Selecione uma categoria</option>
-            <option value="Chá">Chá</option>
-            <option value="Caneca">Caneca</option>
-            <option value="Garrafa">Garrafa</option>
-            <option value="Infusor">Infusor</option>
-            <option value="Acessório">Acessório</option>
-            <option value="Outros">Outros</option>
-          </select>
-        </div>
-        
-        <div class="image-upload">
-          <h3>Imagem do Produto (Obrigatório)</h3>
-          <input type="file" id="imagemInput" accept="image/*" onchange="previewImage(this)" required />
-          <div class="image-preview">
-            <img id="imagePreview" class="hidden" width="200" />
-          </div>
-        </div>
 
-        <div class="form-actions">
-          <button class="btn btn-add" onclick="addProd()">Adicionar Produto</button>
-          <button class="btn btn-toggle" onclick="toggleLista()">Mostrar/Ocultar Lista</button>
+        <div class="form-group">
+          <input id="qntdmin" placeholder="Quantidade minima de estoque" type="number" />
         </div>
-      </section>
-      
-      <section class="list-section">
-        <h2>Produtos em Estoque</h2>
-        <ul id="lista-produtos" class="hidden"></ul>
-      </section>
-    </main>
+  </div>
+
+
+  <div class="form-group">
+    <select id="categoria" required>
+      <option value="">Selecione uma categoria</option>
+      <option value="Chá">Chá</option>
+      <option value="Caneca">Caneca</option>
+      <option value="Garrafa">Garrafa</option>
+      <option value="Infusor">Infusor</option>
+      <option value="Acessório">Acessório</option>
+      <option value="Outros">Outros</option>
+    </select>
+  </div>
+
+  <div class="image-upload">
+    <h3>Imagem do Produto (Obrigatório)</h3>
+    <input type="file" id="imagemInput" accept="image/*" onchange="previewImage(this)" required />
+    <div class="image-preview">
+      <img id="imagePreview" class="hidden" width="200" />
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn btn-add" onclick="addProd()">Adicionar Produto</button>
+    <button class="btn btn-toggle" onclick="toggleLista()">Mostrar/Ocultar Lista</button>
+  </div>
+  </section>
+
+  <section class="list-section">
+    <h2>Produtos em Estoque</h2>
+    <ul id="lista-produtos" class="hidden"></ul>
+  </section>
+  </main>
   </div>
 
   <div id="notification" class="notification hidden"></div>
@@ -91,7 +98,7 @@
     // ENDPOINTS DA API - usando caminhos relativos
     const API_PRODUTOS = "/produtos";
     const API_UPLOAD = "/uploads";
-    
+
     let listaVisivel = false;
     let currentImageFile = null;
 
@@ -100,7 +107,7 @@
       const notification = document.getElementById('notification');
       notification.textContent = message;
       notification.className = `notification ${type} show`;
-      
+
       setTimeout(() => {
         notification.classList.remove('show');
       }, 3000);
@@ -110,15 +117,15 @@
     function previewImage(input) {
       const preview = document.getElementById('imagePreview');
       currentImageFile = input.files[0];
-      
+
       if (currentImageFile) {
         const reader = new FileReader();
-        
-        reader.onload = function(e) {
+
+        reader.onload = function (e) {
           preview.src = e.target.result;
           preview.classList.remove('hidden');
         }
-        
+
         reader.readAsDataURL(currentImageFile);
       } else {
         preview.src = '';
@@ -131,7 +138,7 @@
       listaVisivel = !listaVisivel;
       const lista = document.getElementById('lista-produtos');
       lista.classList.toggle('hidden', !listaVisivel);
-      
+
       if (listaVisivel) {
         allProd();
       }
@@ -145,9 +152,10 @@
       const precovenda = parseFloat(document.getElementById("precovenda").value);
       const validade = document.getElementById("validade").value;
       const qntd = parseInt(document.getElementById("qntd").value);
+      const qntdmin = parseInt(document.getElementById("qntdmin").value);
       const categoria = document.getElementById("categoria").value;
 
-      if (!nome || !desc || !precocompra || !precovenda || !validade || !qntd || !categoria || !currentImageFile) {
+      if (!nome || !desc || !precocompra || !precovenda || !qntd || !categoria || !currentImageFile) {
         showNotification('Por favor, preencha todos os campos obrigatórios!', 'error');
         return;
       }
@@ -161,6 +169,7 @@
       formData.append('precovenda', precovenda);
       formData.append('validade', validade);
       formData.append('qntd', qntd);
+      formData.append('qntdmin', qntdmin);
       formData.append('file', currentImageFile);
 
       try {
@@ -168,11 +177,11 @@
           method: "POST",
           body: formData
         });
-        
+
         if (response.ok) {
           const produtoCriado = await response.json();
           showNotification('Produto adicionado com sucesso!', 'success');
-          
+
           // Limpar campos
           document.getElementById("nome").value = "";
           document.getElementById("desc").value = "";
@@ -180,11 +189,12 @@
           document.getElementById("precovenda").value = "";
           document.getElementById("validade").value = "";
           document.getElementById("qntd").value = "";
+          document.getElementById("qntdmin").value = "";
           document.getElementById("categoria").value = "";
           document.getElementById("imagemInput").value = "";
           document.getElementById("imagePreview").classList.add('hidden');
           currentImageFile = null;
-          
+
           // Atualizar a lista se estiver visível
           if (listaVisivel) {
             allProd();
@@ -205,7 +215,7 @@
       if (!confirm(`Tem certeza que deseja remover o produto "${nome}"?`)) {
         return;
       }
-      
+
       try {
         const response = await fetch(`${API_PRODUTOS}/${id}`, { method: "DELETE" });
         if (response.ok) {
@@ -226,7 +236,7 @@
       const productElement = document.getElementById(`product-${id}`);
       const productDetails = productElement.querySelector('.product-details');
       const editForm = productElement.querySelector('.edit-form');
-      
+
       // Preencher o formulário com os dados atuais
       const nome = productElement.querySelector('[data-field="nome"]').textContent;
       const desc = productElement.querySelector('[data-field="desc"]').textContent;
@@ -234,16 +244,18 @@
       const precovenda = productElement.querySelector('[data-field="precovenda"]').textContent;
       const validadeValue = productElement.querySelector('[data-field="validade"]').dataset.value;
       const qntd = productElement.querySelector('[data-field="qntd"]').textContent;
+      const qntdmin = productElement.querySelector('[data-field="qntd"]').textContent;
       const categoria = productElement.querySelector('[data-field="categoria"]').textContent;
-      
+
       editForm.querySelector('#edit-nome').value = nome;
       editForm.querySelector('#edit-desc').value = desc;
       editForm.querySelector('#edit-precocompra').value = precocompra;
       editForm.querySelector('#edit-precovenda').value = precovenda;
       editForm.querySelector('#edit-validade').value = validadeValue || '';
       editForm.querySelector('#edit-qntd').value = qntd;
+      editForm.querySelector('#edit-qntdmin').value = qntdmin;
       editForm.querySelector('#edit-categoria').value = categoria;
-      
+
       // Alternar visibilidade
       productDetails.classList.add('hidden');
       editForm.classList.remove('hidden');
@@ -254,7 +266,7 @@
       const productElement = document.getElementById(`product-${id}`);
       const productDetails = productElement.querySelector('.product-details');
       const editForm = productElement.querySelector('.edit-form');
-      
+
       productDetails.classList.remove('hidden');
       editForm.classList.add('hidden');
     }
@@ -267,21 +279,23 @@
       const precovenda = parseFloat(document.querySelector(`#product-${id} #edit-precovenda`).value);
       const validade = document.querySelector(`#product-${id} #edit-validade`).value;
       const qntd = parseInt(document.querySelector(`#product-${id} #edit-qntd`).value);
+      const qntdmin = parseInt(document.querySelector(`#product-${id} #edit-qntdmin`).value);
       const categoria = document.querySelector(`#product-${id} #edit-categoria`).value;
 
-      if (!nome || !desc || !precocompra || !precovenda || !validade || !qntd || !categoria) {
+      if (!nome || !desc || !precocompra || !precovenda || !qntd || !categoria) {
         showNotification('Por favor, preencha todos os campos obrigatórios!', 'error');
         return;
       }
 
       const produtoData = {
-        nome, 
-        desc, 
+        nome,
+        desc,
         categoria,
-        precocompra, 
-        precovenda, 
-        validade, 
-        qntd
+        precocompra,
+        precovenda,
+        validade,
+        qntd,
+        qntdmin
       };
 
       try {
@@ -290,7 +304,7 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(produtoData)
         });
-        
+
         if (response.ok) {
           showNotification('Produto atualizado com sucesso!', 'success');
           allProd(); // Atualiza a lista
@@ -306,7 +320,7 @@
     // Função auxiliar para formatar data de forma segura
     function safeDateFormat(dateString) {
       if (!dateString) return 'Não definida';
-      
+
       try {
         const datePart = dateString.split('T')[0];
         const date = new Date(datePart);
@@ -320,7 +334,7 @@
     // Função auxiliar para extrair valor da data de forma segura
     function safeDateValue(dateString) {
       if (!dateString) return '';
-      
+
       try {
         return dateString.split('T')[0];
       } catch (e) {
@@ -336,10 +350,10 @@
         if (!response.ok) {
           throw new Error(`Erro HTTP: ${response.status}`);
         }
-        
+
         const produtos = await response.json();
         console.log('Produtos recebidos:', produtos); // Para debug
-        
+
         const lista = document.getElementById('lista-produtos');
         lista.innerHTML = ''; // Limpa a lista
 
@@ -347,11 +361,11 @@
           // Verificar se o produto tem imagem
           const hasImage = produto.imagem && produto.imagem.src;
           const imageUrl = hasImage ? `/${produto.imagem.src}` : '';
-          
+
           // Extrair valor da data de forma segura
           const dataValor = safeDateValue(produto.validade);
           const dataFormatada = safeDateFormat(produto.validade);
-          
+
           lista.innerHTML += `
             <li id="product-${produto._id}">
               <div class="product-details">
@@ -362,6 +376,7 @@
                 <p><strong>Preço de venda:</strong> R$ <span data-field="precovenda">${produto.precovenda}</span></p>
                 <p><strong>Validade:</strong> <span data-field="validade" data-value="${dataValor}">${dataFormatada}</span></p>
                 <p><strong>Quantidade em estoque:</strong> <span data-field="qntd">${produto.qntd}</span></p>
+                <p><strong>Quantidade mínima em estoque:</strong> <span data-field="qntdmin">${produto.qntdmin || 'Não definida'}</span></p>
                 
                 ${hasImage ? `
                   <div class="image-container">
@@ -385,6 +400,7 @@
                 <input type="number" id="edit-precovenda" placeholder="Preço de venda" step="0.01" value="${produto.precovenda}">
                 <input type="date" id="edit-validade" value="${dataValor}">
                 <input type="number" id="edit-qntd" placeholder="Quantidade" value="${produto.qntd}">
+                <input type="number" id="edit-qntdmin" placeholder="Quantidade minima de estoque" value="${produto.qntdmin || ''}">
                 <select id="edit-categoria">
                   <option value="Chá" ${produto.categoria === 'Chá' ? 'selected' : ''}>Chá</option>
                   <option value="Caneca" ${produto.categoria === 'Caneca' ? 'selected' : ''}>Caneca</option>
@@ -409,14 +425,14 @@
     }
 
     // Inicialização quando a página carrega
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       // Verificar se o usuário está autenticado
       const token = localStorage.getItem('token');
       if (!token) {
         window.location.href = '/login';
         return;
       }
-      
+
       // Carregar produtos se a lista estiver visível
       if (listaVisivel) {
         allProd();
@@ -424,4 +440,5 @@
     });
   </script>
 </body>
+
 </html>
