@@ -55,6 +55,7 @@ exports.create = async (req, res) => {
       precovenda: Number(precovenda),
       validade: new Date(validade),
       qntd: Number(qntd),
+      qntdmin: Number(qntd),
       imagem: picture._id
     });
 
@@ -73,13 +74,13 @@ exports.create = async (req, res) => {
 // Atualizar prod
 exports.update = async (req, res) => {
   const { id } = req.params;
-  const { nome, desc, categoria, precocompra, precovenda, validade, qntd } = req.body;
-  if (!nome || !desc || !categoria || !precocompra || !precovenda || !validade || !qntd) {
+  const { nome, desc, categoria, precocompra, precovenda, validade, qntd, qntdmin } = req.body;
+  if (!nome || !desc || !categoria || !precocompra || !precovenda || !validade || !qntd || !qntdmin) {
     return res.status(400).json({ erro: "Todos os campos são obrigatorios!" });
   }
   try {
     const produto = await StockCtrl.findByIdAndUpdate(id,
-      { nome, desc, categoria, precocompra, precovenda, validade, qntd },
+      { nome, desc, categoria, precocompra, precovenda, validade, qntd, qntdmin },
       { new: true, runValidators: true });
     if (!produto) {
       return res.status(404).json({ erro: "produto não encontrada" });
@@ -109,7 +110,7 @@ exports.getPublicProducts = async (req, res) => {
   try {
     const produtos = await StockCtrl.find()
       .populate('imagem')
-      .select('-precocompra -validade -qntd'); // Exclui campos sensíveis
+      .select('-precocompra -validade -qntd -qntdmin'); // Exclui campos sensíveis
 
     res.json(produtos);
   } catch (error) {
@@ -122,7 +123,7 @@ exports.getProductsByCategory = async (req, res) => {
     const { categoria } = req.params;
     const produtos = await StockCtrl.find({ categoria })
       .populate('imagem')
-      .select('-precocompra -validade -qntd');
+      .select('-precocompra -validade -qntd -qntdmin');
 
     res.json(produtos);
   } catch (error) {
@@ -131,9 +132,8 @@ exports.getProductsByCategory = async (req, res) => {
 };
 
 exports.verificarEstoque = async (produto) => {
-  const ESTOQUE_MINIMO = 5; // Define o limite mínimo
 
-  if (produto.qntd <= ESTOQUE_MINIMO) {
+  if (produto.qntd <= produto.qntdmin) {
     try {
       const transportador = createTransporter();
 
@@ -146,7 +146,7 @@ exports.verificarEstoque = async (produto) => {
           <p>O produto <strong>${produto.nome}</strong> está com estoque baixo.</p>
           <ul>
             <li>Quantidade atual: <strong>${produto.qntd} unidades</strong></li>
-            <li>Limite mínimo: ${ESTOQUE_MINIMO} unidades</li>
+            <li>Limite mínimo: ${produto.qntdmin} unidades</li>
             <li>Categoria: ${produto.categoria || 'Não informada'}</li>
           </ul>
           <p>Por favor, reabasteça o estoque.</p>
