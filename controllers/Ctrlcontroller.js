@@ -107,7 +107,7 @@ exports.remove = async (req, res) => {
 
 exports.getPublicProducts = async (req, res) => {
   try {
-    const produtos = await Product.find()
+    const produtos = await StockCtrl.find()
       .populate('imagem')
       .select('-precocompra -validade -qntd'); // Exclui campos sensíveis
 
@@ -120,7 +120,7 @@ exports.getPublicProducts = async (req, res) => {
 exports.getProductsByCategory = async (req, res) => {
   try {
     const { categoria } = req.params;
-    const produtos = await Product.find({ categoria })
+    const produtos = await StockCtrl.find({ categoria })
       .populate('imagem')
       .select('-precocompra -validade -qntd');
 
