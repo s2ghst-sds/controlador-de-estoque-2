@@ -20,7 +20,7 @@ async function main() {
   );
 
   // Exibe uma mensagem de sucesso caso a conexão seja estabelecida com sucesso
-  console.log("Conectou ao banco de dados!");
+  console.log("Conectou ao banco de dados! 📈");
 }
 
 // Chama a função main e, se ocorrer algum erro durante a conexão, exibe o erro no console

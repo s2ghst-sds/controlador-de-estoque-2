@@ -75,11 +75,16 @@
     }
     
     /* Seções principais */
-    .form-section, .list-section {
+    .form-section {
       background-color: white;
       padding: 25px;
       border-radius: 10px;
       box-shadow: var(--shadow);
+      margin-bottom: 25px;
+    }
+
+    .list-section {
+      border-radius: 10px;
       margin-bottom: 25px;
     }
     
