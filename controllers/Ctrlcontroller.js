@@ -31,7 +31,7 @@ exports.getById = async (req, res) => {
 // Criar novo produto
 exports.create = async (req, res) => {
 
-  const { nome, desc, categoria, precocompra, precovenda, validade, qntd } = req.body;
+  const { nome, desc, categoria, precocompra, precovenda, validade, qntd, qntdmin} = req.body;
   const file = req.file;
 
   if (!nome || !desc || !categoria || !precocompra || !precovenda || !validade || !qntd || !file) {
@@ -55,7 +55,7 @@ exports.create = async (req, res) => {
       precovenda: Number(precovenda),
       validade: new Date(validade),
       qntd: Number(qntd),
-      qntdmin: Number(qntd),
+      qntdmin: Number(qntdmin),
       imagem: picture._id
     });
 
